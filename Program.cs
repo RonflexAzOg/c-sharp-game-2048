@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace Console2048
 {
@@ -7,22 +6,26 @@ namespace Console2048
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to 2048!");
-            Console.WriteLine("Use the arrow keys to move the tiles.");
-            Console.WriteLine("When two tiles with the same number touch, they merge into one!");
-            Console.WriteLine("Press any key to start the game.");
-            Console.ReadKey();
+            HomeScreen();
 
-            // Initialize the game board
-            int[,] board = new int[4, 4];
-            // Add the first two tiles
-            AddRandomTile(board);
-            AddRandomTile(board);
+            AnimationStarting();
 
-            // Initialize the score
-            int score = 0;
-            int bestScore = 0; 
+            while (true) 
+            {
+                // Initialize the game board
+                int[,] board = new int[4, 4];
+                
+                // Add the first two tiles
+                AddRandomTile(board);
+                AddRandomTile(board);
+                
+                // Play the game
+                PlayGame(board);
+            }
+        }
 
+        static void PlayGame(int[,] board) 
+        {
             // Game loop
             while (true)
             {
@@ -30,15 +33,12 @@ namespace Console2048
                 Console.Clear();
                 PrintBoard(board);
 
-                // Display the score and the best score
-                Console.WriteLine("Score: " + score);
-                Console.WriteLine("Best score: " + bestScore);
-
                 // Get the player's input
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
+                        // Move the tiles up
                         for (int col = 0; col < 4; col++)
                             {
                                 int[] column = new int[4];
@@ -54,6 +54,7 @@ namespace Console2048
                             }
                         break;
                     case ConsoleKey.DownArrow:
+                        // Move the tiles down
                         for (int col = 3; col >= 0; col--)
                         {
                             int[] column = new int[4];
@@ -69,6 +70,7 @@ namespace Console2048
                         }
                         break;
                     case ConsoleKey.LeftArrow:
+                        // Move the tiles left
                         for (int row = 0; row < 4; row++)
                         {
                             int[] line = new int[4];
@@ -99,6 +101,9 @@ namespace Console2048
                             }
                         }
                         break;
+                    default:
+                        break;
+                        return;
                 }
                 
                 // Add a new random tile to the board
@@ -144,23 +149,22 @@ namespace Console2048
             {
                 result[i] = 0;
             }
-
             return result;
         }
 
         static void AddRandomTile(int[,] board)
         {
             // Find a random empty cell
-            Random rnd = new Random();
+            Random random = new Random();
             int row, col;
             do
             {
-                row = rnd.Next(4);
-                col = rnd.Next(4);
+                row = random.Next(4);
+                col = random.Next(4);
             } while (board[row, col] != 0);
 
             // Add a 2 or 4 to the empty cell
-            int value = rnd.Next(2) == 0 ? 2 : 4;
+            int value = random.Next(2) == 0 ? 2 : 4;
             board[row, col] = value;
         }
 
@@ -185,16 +189,15 @@ namespace Console2048
                     }
                     else
                     {
-                        Color color = GetColor(cell);
-                        Console.ForegroundColor = (consoleColor)Enum.Parse(typeof(consoleColor), color.Name);
                         Console.Write($"{cell,5} ║");
-                        Console.ResetColor();
                     }
                 }
                 Console.WriteLine();
 
+                // Check if the row is the last or not 
                 if (row == 3)
                 {
+                    // Print the bottom border
                     Console.WriteLine("╚══════╩══════╩══════╩══════╝");
                 } else 
                 {
@@ -204,112 +207,43 @@ namespace Console2048
             }
         }
 
-        static void DisplayBoard(int[,] board)
+        static void Clear()
         {
             Console.Clear();
-            for (int row = 0; row < 4; row++)
-            {
-                for (int col = 0; col < 4; col++)
-                {
-                    Console.Write(board[row, col]);
-                    Console.Write(" ");
-                }
-                Console.WriteLine();
-            }
         }
-
-        static int GetPoints(int[,] board)
+    
+        static void HomeScreen()
         {
-            int points = 0;
-            bool merged = false;
-            for (int row = 0; row < 4; row++)
-            {
-                for (int col = 0; col < 4; col++)
-                {
-                    if (board[row, col] > 2)
-                    {
-                        merged = true;
-                        points += board[row, col] * 2;
-                    }
-                }
-            }
-            return merged ? points : 0;
+            // ####################################
+            // ############ Home screen ###########
+            // ####################################
+            Clear();
+            Console.WriteLine("██████╗░░█████╗░░░██╗██╗░█████╗░  ████████╗██╗░░██╗███████╗  ░██████╗░░█████╗░███╗░░░███╗███████╗");
+            Console.WriteLine("╚════██╗██╔══██╗░██╔╝██║██╔══██╗  ╚══██╔══╝██║░░██║██╔════╝  ██╔════╝░██╔══██╗████╗░████║██╔════╝");
+            Console.WriteLine("░░███╔═╝██║░░██║██╔╝░██║╚█████╔╝  ░░░██║░░░███████║█████╗░░  ██║░░██╗░███████║██╔████╔██║█████╗░░");
+            Console.WriteLine("██╔══╝░░██║░░██║███████║██╔══██╗  ░░░██║░░░██╔══██║██╔══╝░░  ██║░░╚██╗██╔══██║██║╚██╔╝██║██╔══╝░░");
+            Console.WriteLine("███████╗╚█████╔╝╚════██║╚█████╔╝  ░░░██║░░░██║░░██║███████╗  ╚██████╔╝██║░░██║██║░╚═╝░██║███████╗");
+            Console.WriteLine("╚══════╝░╚════╝░░░░░░╚═╝░╚════╝░  ░░░╚═╝░░░╚═╝░░╚═╝╚══════╝  ░╚═════╝░╚═╝░░╚═╝╚═╝░░░░░╚═╝╚══════╝");
+            Console.WriteLine("\nUse the arrow keys to move the tiles.");
+            Console.WriteLine("\nWhen two tiles with the same number touch, they merge into one!");
+            Console.WriteLine("\nPress any key to start the game.");
+            Console.ReadKey();
+            Clear();
         }
-
-        static Color GetColor(int cell)
+    
+        static void AnimationStarting()
         {
-            switch (cell)
+            // ####################################
+            // ##### Animation before starting ####
+            // ####################################
+            Console.WriteLine("\nThe game will start in...");
+            for (int i = 3; i > 0; i--)
             {
-                case 2: return Color.FromArgb(238, 228, 218);
-                case 4: return Color.FromArgb(237, 224, 200);
-                case 8: return Color.FromArgb(242, 177, 121);
-                case 16: return Color.FromArgb(245, 149, 99);
-                case 32: return Color.FromArgb(246, 124, 95);
-                case 64: return Color.FromArgb(246, 94, 59);
-                case 128: return Color.FromArgb(237, 207, 114);
-                case 256: return Color.FromArgb(237, 204, 97);
-                case 512: return Color.FromArgb(237, 200, 80);
-                case 1024: return Color.FromArgb(237, 197, 63);
-                case 2048: return Color.FromArgb(237, 194, 46);
-                default: return Color.FromArgb(205, 193, 180);
+                Console.WriteLine(i);
+                Thread.Sleep(1000); 
             }
-        }
-
-        static bool HasLost(int[,] board)
-        {
-            // Check if there are any empty cells
-            for (int row = 0; row < 4; row++)
-            {
-                for (int col = 0; col < 4; col++)
-                {
-                    if (board[row, col] == 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            // Check if any adjacent cells have the same value
-            for (int row = 0; row < 4; row++)
-            {
-                for (int col = 0; col < 4; col++)
-                {
-                    if (row > 0 && board[row, col] == board[row - 1, col])
-                    {
-                        return false;
-                    }
-                    if (row < 3 && board[row, col] == board[row + 1, col])
-                    {
-                        return false;
-                    }
-                    if (col > 0 && board[row, col] == board[row, col - 1])
-                    {
-                        return false;
-                    }
-                    if (col < 3 && board[row, col] == board[row, col + 1])
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-        
-        static bool HasWon(int[,] board)
-        {
-            // Check if there is a 2048 tile
-            for (int row = 0; row < 4; row++)
-            {
-                for (int col = 0; col < 4; col++)
-                {
-                    if (board[row, col] == 2048)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            Console.WriteLine("Go!");
+            Clear();
         }
     }
 }
