@@ -7,8 +7,9 @@ namespace Console2048
         static void Main(string[] args)
         {
             HomeScreen();
-
             AnimationStarting();
+
+            bool gameOver = false;
 
             while (true) 
             {
@@ -32,6 +33,11 @@ namespace Console2048
                 // Print the game board
                 Console.Clear();
                 PrintBoard(board);
+
+                // Vérifiez si le jeu est terminé
+                if (IsGameOver(board)) {
+                    break;
+                }
 
                 // Get the player's input
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -101,9 +107,11 @@ namespace Console2048
                             }
                         }
                         break;
-                    default:
-                        break;
+                    case ConsoleKey.R:
+                        // Restart the game
                         return;
+                    default:
+                        continue;
                 }
                 
                 // Add a new random tile to the board
@@ -207,6 +215,40 @@ namespace Console2048
             }
         }
 
+        static bool IsGameOver(int[,] board) 
+        {
+            // Vérifiez s'il reste des espaces vides sur le plateau
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 4; col++) {
+                if (board[row, col] == 0) {
+                    return false;
+                }
+                }
+            }
+
+            // Vérifiez s'il y a des tuiles adjacentes qui peuvent être fusionnées
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 4; col++) {
+                if (row > 0 && board[row, col] == board[row - 1, col]) {
+                    return false;
+                }
+                if (row < 3 && board[row, col] == board[row + 1, col]) {
+                    return false;
+                }
+                if (col > 0 && board[row, col] == board[row, col - 1]) {
+                    return false;
+                }
+                if (col < 3 && board[row, col] == board[row, col + 1]) {
+                    return false;
+                }
+                }
+            }
+
+            // Aucun espace vide ni tuile adjacente fusionnable n'a été trouvé, le jeu est donc terminé
+            return true;
+            }
+
+
         static void Clear()
         {
             Console.Clear();
@@ -227,6 +269,7 @@ namespace Console2048
             Console.WriteLine("\nUse the arrow keys to move the tiles.");
             Console.WriteLine("\nWhen two tiles with the same number touch, they merge into one!");
             Console.WriteLine("\nPress any key to start the game.");
+            Console.WriteLine("\nIf you wish to restart press R at any time");
             Console.ReadKey();
             Clear();
         }
